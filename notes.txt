@@ -1,7 +1,6 @@
 https://gilesbathgate.com/2007/11/30/streaming-video-using-netcat/
 Server:
 	nc -l -p 8081 < trail.mp4 & 
-	websockify -v --web=. 8082 localhost:8081
 
 Client:
 	nc 127.0.0.1 8080 | mplayer -cache 8192 -
@@ -16,8 +15,13 @@ https://github.com/lulop-k/kurento-rtsp2webrtc
 
 rtsp://mpv.cdn3.bigCDN.com:554/bigCDN/definst/mp4:bigbuckbunnyiphone_400.mp4
 
-vlc -vvv tcp://192.168.88.128:9090 --sout '#rtp{sdp=rtsp://localhost:9999/stream}'
 
-https://www.ffmpeg.org/sample.html
+This works:
+term1: 
+	$ nc -l -p 8081 < movie.mp4
 
-https://trac.ffmpeg.org/wiki/ffserver
+term2:
+	$ cvlc -vvv tcp://:9090 --sout '#rtp{sdp=rtsp://localhost:8554/seren}' 
+
+term3:
+	$ ffplay rtsp://localhost:8554/seren
