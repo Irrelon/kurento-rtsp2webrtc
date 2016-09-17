@@ -44,7 +44,7 @@ window.addEventListener('load', function(){
   console = new Console('console', console);
 	var videoOutput = document.getElementById('videoOutput');
 	var address = document.getElementById('address');
-	address.value = 'http://files.kurento.org/video/puerta-del-sol.ts';
+	address.value = 'http://files.kurento.org/video/format/rabbit.mov';
   var pipeline;
   var webRtcPeer;
 
@@ -61,8 +61,27 @@ window.addEventListener('load', function(){
   	}
   	address.disabled = true;
   	showSpinner(videoOutput);
+
+    var userMediaConstraints = {
+      audio : true,
+      video : {
+        width: {
+            min: 640,
+            max: 1280
+        },
+        height: {
+            min: 480,
+            max: 720
+        },
+        frameRate: {
+            min: 24
+        }
+      }
+    }
+
     var options = {
-      remoteVideo : videoOutput
+      remoteVideo : videoOutput,
+      mediaConstraints : userMediaConstraints      
     };
     webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options,
       function(error){
