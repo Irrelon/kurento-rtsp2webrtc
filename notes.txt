@@ -17,3 +17,7 @@ https://github.com/lulop-k/kurento-rtsp2webrtc
 rtsp://mpv.cdn3.bigCDN.com:554/bigCDN/definst/mp4:bigbuckbunnyiphone_400.mp4
 
 vlc -vvv tcp://192.168.88.128:9090 --sout '#rtp{sdp=rtsp://localhost:9999/stream}'
+
+https://www.ffmpeg.org/sample.html
+
+https://trac.ffmpeg.org/wiki/ffserver
