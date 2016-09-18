@@ -44,7 +44,10 @@ window.addEventListener('load', function(){
   console = new Console('console', console);
 	var videoOutput = document.getElementById('videoOutput');
 	var address = document.getElementById('address');
-	address.value = 'http://files.kurento.org/video/format/rabbit.mov';
+	address.value = 'rtsp://localhost:8554/testfeed';
+  var kaddress = document.getElementById('kaddress');
+  kaddress.value = 'ws://host:8555';
+
   var pipeline;
   var webRtcPeer;
 

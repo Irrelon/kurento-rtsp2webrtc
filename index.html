@@ -29,17 +29,6 @@
 
 <body>
 	<header>
-		<div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse"
-						data-target=".navbar-collapse"></button>
-					<a class="navbar-brand" href="./">Kurento Tutorial</a>
-				</div>
-				<div class="collapse navbar-collapse"
-					id="bs-example-navbar-collapse-1"></div>
-			</div>
-		</div>
 	</header>
 	<div class="container">
 		<div class="page-header">
@@ -51,7 +40,9 @@
 				<video id="videoOutput" autoplay width="640px" height="480px"
 					poster="./img/webrtc.png"></video>
 				</br>
-				Set source URL: <input style="width:350px;" id="address" type="text">
+				Video Feed: <input style="width:350px;" id="address" type="text">
+				</br></br>
+				Key server: <input style="width:350px;" id="kaddress" type="text">
 				</br></br>
 			</div>
 			<div class="col-md-2">
@@ -70,29 +61,5 @@
 				</div>
 			</div>
 		</div>
-
-		<footer>
-			<div class="foot-fixed-bottom">
-				<div class="container text-center">
-					<hr />
-					<div class="row">&copy; 2014 Kurento</div>
-					<div class="row">
-						<div class="col-md-4">
-							<a href="http://www.urjc.es"><img src="./img/urjc.gif"
-								alt="Universidad Rey Juan Carlos" height="50px" /></a>
-						</div>
-						<div class="col-md-4">
-							<a href="http://www.kurento.org"><img src="./img/kurento.png"
-								alt="Kurento" height="50px" /></a>
-						</div>
-						<div class="col-md-4">
-							<a href="http://www.naevatec.com"><img
-								src="./img/naevatec.png" alt="Naevatec" height="50px" /></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
-	</div>
 </body>
 </html>
