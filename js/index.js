@@ -63,7 +63,7 @@ window.addEventListener('load', function(){
   	showSpinner(videoOutput);
 
     var userMediaConstraints = {
-      audio : true,
+      audio : false,
       video : {
         width: {
             min: 640,

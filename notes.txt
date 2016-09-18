@@ -16,12 +16,39 @@ https://github.com/lulop-k/kurento-rtsp2webrtc
 rtsp://mpv.cdn3.bigCDN.com:554/bigCDN/definst/mp4:bigbuckbunnyiphone_400.mp4
 
 
-This works:
-term1: 
-	$ nc -l -p 8081 < movie.mp4
+WHAT WORKS:
 
-term2:
-	$ cvlc -vvv tcp://:9090 --sout '#rtp{sdp=rtsp://localhost:8554/seren}' 
+1-FFPLAY RTSP streaming from socket
+	Terminal1 (host1, ip1): 
+		# Write video to socket to simulates facet ucs:  
+		$ nc -l -p 9090 < movie.mp4
 
-term3:
-	$ ffplay rtsp://localhost:8554/seren
+	Terminal2 (host2, ip2): 
+		# Read video from term1 socket and start RTSP server
+		$ cvlc -vvv tcp://<IP1>:9090 --sout '#rtp{sdp=rtsp://localhost:8554/seren}' 
+
+	Terminal3 (host2, ip2):
+		$ ffplay rtsp://localhost:8554/seren
+
+2-BROWSER RTSP streaming from socket
+	Terminal1 (host1, ip1): 
+		# Write video to socket to simulates facet ucs:  
+		$ nc -l -p 9090 < movie.mp4
+
+	Terminal2 (host2, ip2): 
+		# Read video from term1 socket and start RTSP server
+		$ cvlc -vvv tcp://<IP1>:9090 --sout '#rtp{sdp=rtsp://localhost:8554/seren}' 
+
+	Terminal3 (host2, ip2):
+		# Install Kurento as in http://doc-kurento.readthedocs.io/en/stable/installation_guide.html
+		# Start Kurento server
+		$ sudo service kurento-media-server-6.0 start
+
+		# Install Kurento webrtc
+		$ git clone https://github.com/lulop-k/kurento-rtsp2webrtc
+
+		# Start an http server here and launch the demo app
+		$ cd kurento-rtsp2webrtc
+		$ google-chrome http://localhost:8080
+
+		# Then play video in the web app by using this source URL: "rtsp://localhost:8554/seren"
