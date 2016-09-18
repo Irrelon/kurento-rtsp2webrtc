@@ -39,6 +39,34 @@ if (args.ice_servers) {
   console.log("Use freeice")
 }
 
+var kWebsocket = null;
+
+function checkKeyPressed(e) {
+  if (!kWebsocket) return;
+  e = e || window.event;
+  // use e.keyCode
+  console.log("keypress " + e.keyCode);
+  // TODO convert values sent
+  //left
+  if (e.keyCode == 37) {
+    kWebsocket.send(13);    
+  }
+  else if (e.keyCode == 38) {//up
+    kWebsocket.send(13);
+  }
+  else if (e.keyCode == 39) {  //right  
+    kWebsocket.send(13);
+  }
+  else if (e.keyCode == 40) {    //down
+    kWebsocket.send(13);
+  }
+  else if (e.keyCode == 13 || e.keyCode == 32) {    //enter or space
+    kWebsocket.send(13);
+  }
+};
+
+window.addEventListener("keydown", checkKeyPressed, false);
+
 
 window.addEventListener('load', function(){
   console = new Console('console', console);
@@ -57,11 +85,42 @@ window.addEventListener('load', function(){
   stopButton = document.getElementById('stop');
   stopButton.addEventListener('click', stop);
 
+  function startKeys() {
+    console.log("Open socket on " + kaddress.value);
+
+    kWebsocket = new WebSocket(kaddress.value);
+        
+    kWebsocket.onopen = function()
+    {
+      kWebsocket.send("Message to send");
+      console.log("socket open");
+    };
+
+    kWebsocket.onmessage = function (evt) 
+    { 
+      var received_msg = evt.data;
+      console.log("Message is received..." + msg);
+    };
+
+    kWebsocket.onclose = function()
+    { 
+      // websocket is closed.
+      kWebsocket = null;
+    };
+
+  };  
+
+  function stopKeys() {
+    if (kWebsocket)
+      kWebsocket.close();
+  }; 
+
   function start() {
   	if(!address.value){
   	  window.alert("You must set the video source URL first");
   	  return;
   	}
+    startKeys();
   	address.disabled = true;
   	showSpinner(videoOutput);
 
