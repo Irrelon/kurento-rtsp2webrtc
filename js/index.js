@@ -46,8 +46,8 @@ var KEYS = {
     /*LEFT*/37:105, 
     /*RIGHT*/39:106, 
     /*DOWN*/40:108, 
-    /*OK*/13:272, 
-    /*PLAY*/32:40164
+    /*OK/ENTER*/13:272, 
+    /*PLAY/SPACE*/32:40164
   };
 
 var kWebsocket = null;
