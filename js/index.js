@@ -39,34 +39,29 @@ if (args.ice_servers) {
   console.log("Use freeice")
 }
 
+var KEYS = { 
+    /*BACK/backspace*/ 8:273, 
+    /*HOME/ESC*/ 27:102, 
+    /*UP*/38:103, 
+    /*LEFT*/37:105, 
+    /*RIGHT*/39:106, 
+    /*DOWN*/40:108, 
+    /*OK*/13:272, 
+    /*PLAY*/32:40164
+  };
+
 var kWebsocket = null;
 
 function checkKeyPressed(e) {
   if (!kWebsocket) return;
   e = e || window.event;
-  // use e.keyCode
   console.log("keypress " + e.keyCode);
-  // TODO convert values sent
-  //left
-  if (e.keyCode == 37) {
-    kWebsocket.send(13);    
-  }
-  else if (e.keyCode == 38) {//up
-    kWebsocket.send(13);
-  }
-  else if (e.keyCode == 39) {  //right  
-    kWebsocket.send(13);
-  }
-  else if (e.keyCode == 40) {    //down
-    kWebsocket.send(13);
-  }
-  else if (e.keyCode == 13 || e.keyCode == 32) {    //enter or space
-    kWebsocket.send(13);
-  }
+
+  if (KEYS.hasOwnProperty(e.keyCode))
+    kWebsocket.send("PRESSED," + KEYS[e.keyCode]); 
 };
 
 window.addEventListener("keydown", checkKeyPressed, false);
-
 
 window.addEventListener('load', function(){
   console = new Console('console', console);
@@ -136,7 +131,7 @@ window.addEventListener('load', function(){
             max: 720
         },
         frameRate: {
-            min: 24
+            min: 30
         }
       }
     }
@@ -178,6 +173,14 @@ window.addEventListener('load', function(){
   				if(error) return onError(error);
 
           setIceCandidateCallbacks(webRtcEndpoint, webRtcPeer, onError);
+
+          webRtcEndpoint.setMaxVideoRecvBandwidth(0);
+          webRtcEndpoint.setMinVideoSendBandwidth(500);
+          webRtcEndpoint.setMaxVideoSendBandwidth(0);
+          console.log("webRtcEndpoint getMinVideoRecvBandwidth " + webRtcEndpoint.getMinVideoRecvBandwidth());
+          console.log("webRtcEndpoint getMinVideoSendBandwidth " + webRtcEndpoint.getMinVideoSendBandwidth());
+          console.log("webRtcEndpoint getMaxVideoSendBandwidth " + webRtcEndpoint.getMaxVideoSendBandwidth());
+
 
   				webRtcEndpoint.processOffer(sdpOffer, function(error, sdpAnswer){
   					if(error) return onError(error);
