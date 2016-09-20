@@ -123,11 +123,11 @@ window.addEventListener('load', function(){
       audio : false,
       video : {
         width: {
-            min: 640,
+            min: 1280,
             max: 1280
         },
         height: {
-            min: 480,
+            min: 720,
             max: 720
         },
         frameRate: {
