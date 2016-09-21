@@ -83,25 +83,26 @@ window.addEventListener('load', function(){
   function startKeys() {
     console.log("Open socket on " + kaddress.value);
 
-    kWebsocket = new WebSocket(kaddress.value);
+    kWebsocket = new Websock();
+    kWebsocket.open(kaddress.value);
         
-    kWebsocket.onopen = function()
+    kWebsocket.on('open', function()
     {
       kWebsocket.send("Message to send");
       console.log("socket open");
-    };
+    });
 
-    kWebsocket.onmessage = function (evt) 
+    kWebsocket.on('message', function (evt) 
     { 
       var received_msg = evt.data;
       console.log("Message is received..." + msg);
-    };
+    });
 
-    kWebsocket.onclose = function()
+    kWebsocket.on('close', function()
     { 
       // websocket is closed.
       kWebsocket = null;
-    };
+    });
 
   };  
 
