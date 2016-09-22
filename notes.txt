@@ -8,7 +8,7 @@ BROWSER streaming from socket
 
 	Terminal2 (host2, ip2): 
 		# Read socket from term1 socket and start RTSP server
-		$ cvlc -vvv tcp://ip1:9090 --sout '#rtp{sdp=rtsp://ip2:8554/testfeed}' 
+		$ cvlc -vvv tcp/h264://ip1:9090 --sout '#rtp{sdp=rtsp://ip2:8554/testfeed}' 
 		
 		# Create websocket to host 1 keys socket
 		$ websockify -v ip2:8082 ip1:9090
