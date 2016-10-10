@@ -9,6 +9,8 @@ BROWSER streaming from socket
 	Terminal2 (host2, ip2): 
 		# Read socket from term1 socket and start RTSP server
 		$ cvlc -vvv tcp/h264://ip1:9090 --sout '#rtp{sdp=rtsp://ip2:8554/testfeed}' 
+		#to proxy websocket: 
+		$ websockify -v --web=. 8088 ip1:7772
 		
 	Terminal3 (host2, ip2):
 		# Install Kurento as in http://doc-kurento.readthedocs.io/en/stable/installation_guide.html
@@ -26,3 +28,10 @@ BROWSER streaming from socket
 		$ google-chrome http://ip2:8080
 
 		# Then play video in the web app by using this source URL: "rtsp://ip2:8554/testfeed"
+
+
+# Print keys
+# ssh dgaumont@10.60.62.12
+# pwd cisco$001
+# $ adb shell
+# $ /private/sf/keyinj.sh 7770   
