@@ -35,3 +35,5 @@ BROWSER streaming from socket
 # pwd cisco$001
 # $ adb shell
 # $ /private/sf/keyinj.sh 7770   
+
+## nc 10.60.62.12 6664 | mplayer -fps 60 -demuxer h264es -
