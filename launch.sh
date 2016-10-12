@@ -4,15 +4,25 @@
 # streamer pc: video socket key socket
 # usage lannch.sh video port key port [feed port]
 usage() { 
-	echo "Usage: $0 -v <ip:port> -k <ip:port> [-f <1234>] [-w <1234>]"; exit 1; 
+	echo "Usage: $0 -v <ip:port> [-k <ip:port>] [-f <1234>] [-w <1234>]"; exit 1; 
+}
+
+# Checks whether a particular package is available in the repos.
+# USAGE: $ package_exists <package name>
+package_exists() {
+  apt-cache pkgnames | grep -x "$1" > /dev/null 2>&1
+}
+
+is_empty() {
+    test -z "$1";
 }
 
 VIDEO_PORT=""
 KEY_PORT=""
 FEED_PORT=8554
-WS_PORT=8088
+WS_PORT=""
 
-while getopts ":v:k:f:" o; do
+while getopts ":v:k:f:w" o; do
     case "${o}" in
         v)
             VIDEO_PORT=${OPTARG}
@@ -32,12 +42,9 @@ while getopts ":v:k:f:" o; do
     esac
 done
 
-
-# Checks whether a particular package is available in the repos.
-# USAGE: $ package_exists <package name>
-package_exists() {
-  apt-cache pkgnames | grep -x "$1" > /dev/null 2>&1
-}
+if is_empty $VIDEO_PORT; then
+    usage
+fi
 
 if ! package_exists vlc; then
   sudo apt-get install vlc | exit 1
@@ -52,13 +59,18 @@ IP=$(ifconfig eth0 | grep addr: | awk '{ print ip=$2 }' | cut -d: -f2)
 
 FEED="#rtp{sdp=rtsp://$IP:$FEED_PORT/testfeed}"
 
-echo "Will start websocket proxy to $KEY_PORT and on local port $WS_PORT";
-echo "websockify -v --web=. $IP:$WS_PORT $KEY_PORT"
+if ! is_empty $WS_PORT; then
+    echo "Will start websocket proxy to $KEY_PORT and on local port $WS_PORT";
+    echo "websockify -v --web=. $IP:$WS_PORT $KEY_PORT"
 
-websockify -v --web=. $IP:$WS_PORT $KEY_PORT &
+    websockify -v --web=. $IP:$WS_PORT $KEY_PORT &
+fi
 
 echo "Will start streaming video from $VIDEO_PORT and serve it on local port $FEED";
 sleep 5
+echo "cvlc -vvv tcp://$VIDEO_PORT --sout $FEED"
+
+#nc -l -p 9090 < t.mp4 &
 
 cvlc -vvv tcp/h264://$VIDEO_PORT --sout $FEED
 

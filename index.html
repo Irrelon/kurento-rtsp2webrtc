@@ -50,6 +50,65 @@
 				</br></br>
 				Key server: <input style="width:350px;" id="kaddress" type="text" value="ws://localhost:8088">
 				</br></br>
+		        <table class="table table-condensed">
+		          <tr>
+		            <th>Stat</th>
+		            <th>Browser</th>
+		            <th>KMS</th>
+		          </tr>
+		          <tr>
+		            <td>SSRC</td>
+		            <td id="browserIncomingSsrc">--</td>
+		            <td id="kmsOutogingSsrc">--</td>
+		          </tr>
+		          <tr>
+		            <td>Bytes received (browser)</td>
+		            <td id="browserBytesReceived">--</td>
+		            <td id="kmsBytesSent">--</td>
+		          </tr>
+		          <tr>
+		            <td>Packets received (browser)</td>
+		            <td id="browserPacketsReceived">--</td>
+		            <td id="kmsPacketsSent">--</td>
+		          </tr>
+		          <tr>
+		            <td>PLIs sent (browser)</td>
+		            <td id="browserPliSent">--</td>
+		            <td id="kmsPliReceived">--</td>
+		          </tr>
+		          <tr>
+		            <td>FIRs sent (browser)</td>
+		            <td id="browserFirSent">--</td>
+		            <td id="kmsFirReceived">--</td>
+		          </tr>
+		          <tr>
+		            <td>NACKs sent (browser)</td>
+		            <td id="browserNackSent">--</td>
+		            <td id="kmsNackReceived">--</td>
+		          </tr>
+		          <tr>
+		            <td>Jitter</td>
+		            <td id="browserJitter">--</td>
+		            <td>--</td>
+		          </tr>
+		          <tr>
+		            <td>RTT</td>
+		            <td>--</td>
+		            <td id="kmsRtt">--</td>
+		          </tr>
+		          <tr>
+		            <td>Packet lost (browser)</td>
+		            <td id="browserIncomingPacketLost">--</td>
+		            <td>--</td>
+		          </tr>
+		          <tr>
+		            <td>REMB</td>
+		            <td id="browserRembReceived">--</td>
+		            <td id="kmsRembReceived">--</td>
+		          </tr>
+
+		        </table>
+				
 			</div>
 			<div class="col-md-2">
 				<a id="start" href="#" class="btn btn-success"><span
@@ -57,9 +116,16 @@
 					id="stop" href="#" class="btn btn-danger"><span
 					class="glyphicon glyphicon-stop"></span> Stop</a>
 			</div>
-			<div class="col-md-5">
+			<div class="col-md-5"></div>
 
-			</div>
+		    <div class="row">
+		      <div class="col-md-12">
+		        <p> KMS e2e lantency:
+		          <span id="e2eLatency">--</span>
+		        </p>
+		      </div>
+		    </div>
+
 			<div class="row">
 				<div class="col-md-12">
 					<label class="control-label" for="console">Console</label>
