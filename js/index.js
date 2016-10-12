@@ -103,7 +103,7 @@ window.addEventListener('load', function(){
     });
 
     getMediaElementStats(webRtcEndpoint, 'inboundrtp', 'VIDEO', function(error, stats) {
-      if (error) return console.log("Warning: could not gather webRtcEndpoing input stats: " + error);
+      if (error) return console.log("Warning: could not gather webRtcEndpoint input stats: " + error);
 
       document.getElementById('kmsIncomingSsrc').innerHTML = stats.ssrc;
       document.getElementById('kmsBytesReceived').innerHTML = stats.bytesReceived;
@@ -130,7 +130,7 @@ window.addEventListener('load', function(){
     });
 
     getMediaElementStats(webRtcEndpoint, 'outboundrtp', 'VIDEO', function(error, stats){
-      if (error) return console.log("Warning: could not gather webRtcEndpoing input stats: " + error);
+      if (error) return console.log("Warning: could not gather webRtcEndpoint output stats: " + error);
 
       document.getElementById('kmsOutogingSsrc').innerHTML = stats.ssrc;
       document.getElementById('kmsBytesSent').innerHTML = stats.bytesSent;
@@ -144,7 +144,7 @@ window.addEventListener('load', function(){
 
     getMediaElementStats(webRtcEndpoint, 'endpoint', 'VIDEO', function(error, stats){
       if(error) return console.log("Warning: could not gather webRtcEndpoint endpoint stats: " + error);
-      document.getElementById('e2eLatency').innerHTML = stats.videoE2ELatency / 1000000 + " seconds";
+      document.getElementById('e2eLatency').innerHTML = stats.videoE2ELatency / 1000 + " milliseconds";
     });
   }
 
@@ -334,15 +334,13 @@ window.addEventListener('load', function(){
       audio : false,
       video : {
         width: {
-            min: 1280,
-            max: 1280
+            min: 1280
         },
         height: {
-            min: 720,
-            max: 720
+            min: 720
         },
         frameRate: {
-            min: 30
+            min: 20
         }
       }
     }
@@ -391,11 +389,11 @@ window.addEventListener('load', function(){
           setIceCandidateCallbacks(webRtcEndpoint, webRtcPeer, onError);
 
           webRtcEndpoint.setMaxVideoRecvBandwidth(0);
-          //webRtcEndpoint.setMinVideoSendBandwidth(500);
           webRtcEndpoint.setMaxVideoSendBandwidth(0);
-          console.log("webRtcEndpoint getMinVideoRecvBandwidth " + webRtcEndpoint.getMinVideoRecvBandwidth());
-          //console.log("webRtcEndpoint getMinVideoSendBandwidth " + webRtcEndpoint.getMinVideoSendBandwidth());
-          console.log("webRtcEndpoint getMaxVideoSendBandwidth " + webRtcEndpoint.getMaxVideoSendBandwidth());
+          webRtcEndpoint.setMaxOutputBitrate(0);
+          console.log("webRtcEndpoint MinVideoRecvBandwidth " + webRtcEndpoint.getMaxVideoRecvBandwidth());
+          console.log("webRtcEndpoint MaxVideoSendBandwidth " + webRtcEndpoint.getMaxVideoSendBandwidth());
+          console.log("webRtcEndpoint MaxOutputBitrate " + webRtcEndpoint.getMaxOutputBitrate());
 
 
   				webRtcEndpoint.processOffer(sdpOffer, function(error, sdpAnswer){
