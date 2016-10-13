@@ -1,0 +1,181 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+<title>JavaScript Event KeyCode Test Page</title>
+<SCRIPT type="text/javascript">
+	var KEYS = { 
+	    /*BACK/backspace*/ 8:4, 
+	    /*HOME/ESC*/ 27:111, 
+	    /*UP*/38:24, 
+	    /*LEFT*/37:21, 
+	    /*RIGHT*/39:22, 
+	    /*DOWN*/40:20, 
+	    /*OK/ENTER*/13:66, 
+	    /*PLAY/SPACE*/32:62
+	};
+	var mySocket, canSend;	
+
+	focusInput = function()
+	{
+		document.getElementById("input").focus();
+	};
+	
+	clear = function()
+	{
+		var eventTypes = ["onkeydown", "onkeypress", "onkeyup"];
+		var codeTypes = ["keycode", "charcode", "which"];
+		for(var event = 0; event < eventTypes.length; event++)
+		{
+			for(var code = 0; code < codeTypes.length; code++)
+			{
+				var element = document.getElementById(eventTypes[event] + "_" + codeTypes[code]);
+				while (element.firstChild != null)
+				{
+					element.removeChild(element.firstChild);
+				}
+			}
+		}
+	};
+	
+	processKeyEvent = function(eventType, event)
+	{
+		// MSIE hack
+		if (window.event)
+		{
+			event = window.event;
+		}
+		
+		var element = document.getElementById(eventType + "_keycode");
+		var text = document.createTextNode("'" + event.keyCode + "'");
+		element.appendChild(text);
+		
+		element = document.getElementById(eventType + "_charcode");
+		text = document.createTextNode("'" + event.charCode + "'");
+		element.appendChild(text);
+	
+		element = document.getElementById(eventType + "_which");
+		text = document.createTextNode("'" + event.which + "'");
+		element.appendChild(text);
+
+		if (eventType == "onkeydown")
+		{
+			if (!mySocket) 
+			{
+				connect();
+			}
+			if (canSend && KEYS.hasOwnProperty(event.keyCode)) {
+			    var key = "KPRESSED,65363," + KEYS[event.keyCode] + '\n'+ "KRELEASED,65363," + KEYS[event.keyCode] + '\n';
+				mySocket.send(key);
+				trace("Sent to socket '" + key + "'' (" + address.value + ")");
+			}
+		}
+	};
+
+	connect = function(s)
+	{
+		var address = document.getElementById("address").value;
+		console.log("Websocket connect " + address);
+		disconnect();
+
+		mySocket = new WebSocket (address, 'binary'); 
+
+		mySocket.onopen = function (evt) 
+		{
+			canSend = true;
+			trace("ws socket open " + address);
+			alert("Websocket connected " + address);
+		};
+		mySocket.onclose = function (evt) 
+		{
+			canSend = false;
+			mySocket = null;
+			trace("ws socket closed " + address);
+		};
+		mySocket.onmessage = function (evt) 
+		{
+			trace(evt.data);
+		};
+	};
+
+	disconnect = function(s)
+	{
+		if (mySocket) 
+		{
+			mySocket.close();
+			mySocket = null;
+		}
+	};
+	
+	trace = function(s)
+	{
+		console.log("Websocket message: " + s);
+	};
+
+	processKeyDown = function(event)
+	{
+		clear();
+		processKeyEvent("onkeydown", event);
+	};
+
+	processKeyPress = function(event)
+	{
+		processKeyEvent("onkeypress", event);
+	};
+
+	processKeyUp = function(event)
+	{
+		processKeyEvent("onkeyup", event);
+	};
+</SCRIPT>
+</head>
+<body>
+	<h1>JavaScript Event KeyCode Test Page</h1>
+	<P>Input: <INPUT id="input" type="text" value=""/></P>
+	<P>WebSocket: <INPUT id="address" type="text" value="ws://localhost:1337"/></P>
+	<button onclick="connect()">Connect</button>
+	<button onclick="disconnect()">Disconnect</button>
+
+	<TABLE border="1">
+		<THEAD>
+			<TR>
+				<TH></TH>
+				<TH>onKeyDown</TH>
+				<TH>onKeyPress</TH>
+				<TH>onKeyUp</TH>
+			</TR>
+		</THEAD>
+		<TR>
+			<TH>event.keyCode</TH>
+			<TD id="onkeydown_keycode"></TD>
+			<TD id="onkeypress_keycode"></TD>
+			<TD id="onkeyup_keycode"></TD>
+		</TR>
+		<TR>
+			<TH>event.charCode</TH>
+			<TD id="onkeydown_charcode"></TD>
+			<TD id="onkeypress_charcode"></TD>
+			<TD id="onkeyup_charcode"></TD>
+		</TR>
+		<TR>
+			<TH>event.which</TH>
+			<TD id="onkeydown_which"></TD>
+			<TD id="onkeypress_which"></TD>
+			<TD id="onkeyup_which"></TD>
+		</TR>
+	</TABLE>
+	<H4>Notable Gotchas</H4>
+	<UL>
+		<LI>Firefox and onKeyDown vs. onKeyPressed</LI>
+		<LI>Firefox and keyCode vs. charCode</LI>
+		<LI>Enter key and onKeyPress on Firefox vs. IE</LI>
+	</UL>
+<SCRIPT>
+	window.onload=focusInput;
+	document.getElementById("input").onkeydown=processKeyDown;
+	document.getElementById("input").onkeypress=processKeyPress;
+	document.getElementById("input").onkeyup=processKeyUp;
+</SCRIPT>
+</body>
+</html>
