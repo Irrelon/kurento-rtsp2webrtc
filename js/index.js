@@ -40,14 +40,14 @@ if (args.ice_servers) {
 }
 
 var KEYS = { 
-    /*BACK/backspace*/ 8:273, 
-    /*HOME/ESC*/ 27:102, 
-    /*UP*/38:103, 
-    /*LEFT*/37:105, 
-    /*RIGHT*/39:106, 
-    /*DOWN*/40:108, 
-    /*OK/ENTER*/13:272, 
-    /*PLAY/SPACE*/32:40164
+    /*BACK/backspace*/ 8:4, 
+    /*HOME/ESC*/ 27:111, 
+    /*UP*/38:24, 
+    /*LEFT*/37:21, 
+    /*RIGHT*/39:22, 
+    /*DOWN*/40:20, 
+    /*OK/ENTER*/13:66, 
+    /*PLAY/SPACE*/32:62
   };
 
 var kWebsocket = null;
@@ -57,8 +57,11 @@ function checkKeyPressed(e) {
   e = e || window.event;
   console.log("keypress " + e.keyCode);
 
-  if (KEYS.hasOwnProperty(e.keyCode))
-    kWebsocket.send("PRESSED," + KEYS[e.keyCode]); 
+  if (KEYS.hasOwnProperty(e.keyCode)) {
+    var k = KEYS[e.keyCode];
+    var key = "KPRESSED,65363," + k + '\n'+ "KRELEASED,65363," + k + '\n';
+    kWebsocket.send(key); 
+  }
 };
 
 window.addEventListener("keydown", checkKeyPressed, false);
@@ -293,26 +296,24 @@ window.addEventListener('load', function(){
   function startKeys() {
     console.log("Open socket on " + kaddress.value);
 
-    kWebsocket = new Websock();
-    kWebsocket.open(kaddress.value);
+    kWebsocket = new WebSocket(kaddress.value, 'binary');
         
-    kWebsocket.on('open', function()
+    kWebsocket.onopen = function()
     {
-      kWebsocket.send("Message to send");
       console.log("socket open");
-    });
+    };
 
-    kWebsocket.on('message', function (evt) 
+    kWebsocket.onmessage = function (evt) 
     { 
       var received_msg = evt.data;
       console.log("Message is received..." + msg);
-    });
+    };
 
-    kWebsocket.on('close', function()
+    kWebsocket.onclose = function()
     { 
       // websocket is closed.
       kWebsocket = null;
-    });
+    };
 
   };  
 
@@ -379,7 +380,7 @@ window.addEventListener('load', function(){
                     if (error) return onError(error);
                   });
 
-  			pipeline.create("PlayerEndpoint", {networkCache: 100, uri: address.value}, function(error, player){
+  			pipeline.create("PlayerEndpoint", {networkCache: 25, uri: address.value}, function(error, player){
   			  if(error) return onError(error);
 
   			  pipeline.create("WebRtcEndpoint", function(error, endPoint){

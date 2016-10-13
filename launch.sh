@@ -5,7 +5,7 @@ set -x
 # streamer pc: video socket key socket
 # usage lannch.sh video port key port [feed port]
 usage() { 
-	echo "Usage: $0 -v <ip:port> [-k <ip:port>] [-f <1234>] [-w <1234>]"; exit 1; 
+	echo "Usage: $0 -v <ip:port> [-f <1234>] [-k <ip:port>] [-w <1234>]"; exit 1; 
 }
 
 # Checks whether a particular package is available in the repos.
@@ -62,11 +62,14 @@ TCD="transcode{vcodec=h264,venc=x264{preset=ultrafast,tune=zerolatency,intra-ref
 FEED="#rtp{sdp=rtsp://$IP:$FEED_PORT/testfeed}"
 RTP_OPTIONS="--sout-rtp-caching 50 --network-caching 50 --rtsp-tcp"
 
-if ! is_empty $WS_PORT; then
+if ! is_empty $KEY_PORT; then
+    if is_empty $WS_PORT; then
+        WS_PORT=$(echo $KEY_PORT | cut -d ':' -f 2)
+    fi
     echo "Will start websocket proxy to $KEY_PORT and on local port $WS_PORT";
     echo "websockify -v --web=. $IP:$WS_PORT $KEY_PORT"
 
-    websockify -v --web=. $IP:$WS_PORT $KEY_PORT &
+    websockify $WS_PORT $KEY_PORT &
 fi
 
 echo "Will start streaming video from $VIDEO_PORT and serve it on local port $FEED";
