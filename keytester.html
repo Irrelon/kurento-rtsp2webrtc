@@ -96,6 +96,7 @@
 		{
 			canSend = false;
 			trace("ws socket closed " + address);
+			alert("Websocket closed " + address);
 		};
 		socket.onmessage = function (evt) 
 		{
