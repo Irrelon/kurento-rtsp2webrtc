@@ -152,7 +152,8 @@
 		mediaSource.addEventListener('sourceopen', function(e) {
 		  console.log("source open");
 		  video.play();
-		  //var mime = 'video/mp4; codecs="avc1.4D401E,mp4a.40.2"';
+		  //var mime = 'video/mp4; codecs="avc1.4D4001,mp4a.40.2"'
+		  //var mime = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
 		  var mime = 'video/webm; codecs="vp8"';
 		  buffer = mediaSource.addSourceBuffer(mime);
 		  buffer.addEventListener('updatestart', function(e) { console.log('updatestart: ' + mediaSource.readyState); });

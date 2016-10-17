@@ -410,7 +410,7 @@ window.addEventListener('load', function(){
 
   					console.log("PlayerEndpoint-->WebRtcEndpoint connection established");
 
-            activateStatsTimeout();
+            //activateStatsTimeout();
 
   					player.play(function(error){
   					  if(error) return onError(error);
