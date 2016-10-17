@@ -1,4 +1,3 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -15,7 +14,7 @@
 	    /*OK/ENTER*/13:66, 
 	    /*PLAY/SPACE*/32:62
 	};
-	var mySocket, canSend;	
+	var kSocket, vSocket, canSend;	
 
 	focusInput = function()
 	{
@@ -61,51 +60,62 @@
 
 		if (eventType == "onkeydown")
 		{
-			if (!mySocket) 
+			if (!kSocket) 
 			{
 				connect();
 			}
 			if (canSend && KEYS.hasOwnProperty(event.keyCode)) {
 			    var key = "KPRESSED,65363," + KEYS[event.keyCode] + '\n'+ "KRELEASED,65363," + KEYS[event.keyCode] + '\n';
-				mySocket.send(key);
-				trace("Sent to socket '" + key + "'' (" + address.value + ")");
+				kSocket.send(key);
+				trace("Sent to socket '" + key + "'' (" + kaddress.value + ")");
 			}
 		}
 	};
 
 	connect = function(s)
 	{
-		var address = document.getElementById("address").value;
-		console.log("Websocket connect " + address);
+		var kaddress = document.getElementById("kaddress").value;
+		var vaddress = document.getElementById("vaddress").value;
+		console.log("Websocket connect " + kaddress + " " +vaddress);
 		disconnect();
 
-		mySocket = new WebSocket (address, 'binary'); 
+		kSocket = createSocket(kaddress); 
+		initVideo();
+	};
 
-		mySocket.onopen = function (evt) 
+	createSocket = function(address)
+	{
+		var socket = new WebSocket (address, 'binary'); 
+
+		socket.onopen = function (evt) 
 		{
 			canSend = true;
 			trace("ws socket open " + address);
-			alert("Websocket connected " + address);
 		};
-		mySocket.onclose = function (evt) 
+		socket.onclose = function (evt) 
 		{
 			canSend = false;
-			mySocket = null;
 			trace("ws socket closed " + address);
 		};
-		mySocket.onmessage = function (evt) 
+		socket.onmessage = function (evt) 
 		{
 			trace(evt.data);
-		};
-	};
+		};		
+		return socket;
+	}
 
 	disconnect = function(s)
 	{
-		if (mySocket) 
+		if (kSocket) 
 		{
-			mySocket.close();
-			mySocket = null;
+			kSocket.close();
+			kSocket = null;
 		}
+		if (vSocket) 
+		{
+			vSocket.close();
+			vSocket = null;
+		}		
 	};
 	
 	trace = function(s)
@@ -128,12 +138,62 @@
 	{
 		processKeyEvent("onkeyup", event);
 	};
+
+	initVideo = function() {
+	  	var video = document.querySelector('video');
+		var mediaSource = new MediaSource();
+		var buffer;
+		var queue = [];
+		video.src = window.URL.createObjectURL(mediaSource);
+	    var address = document.getElementById("vaddress").value;
+		vSocket = new WebSocket(address, 'binary');
+	  	vSocket.binaryType = 'arraybuffer';  
+
+		mediaSource.addEventListener('sourceopen', function(e) {
+		  console.log("source open");
+		  video.play();
+		  //var mime = 'video/mp4; codecs="avc1.4D401E,mp4a.40.2"';
+		  var mime = 'video/webm; codecs="vp8"';
+		  buffer = mediaSource.addSourceBuffer(mime);
+		  buffer.addEventListener('updatestart', function(e) { console.log('updatestart: ' + mediaSource.readyState); });
+		  buffer.addEventListener('update', function(e) { console.log('update: ' + mediaSource.readyState); });
+		  buffer.addEventListener('updateend', function(e) { console.log('updateend: ' + mediaSource.readyState); });
+		  buffer.addEventListener('error', function(e) { console.log('error: ' + mediaSource.readyState); });
+		  buffer.addEventListener('abort', function(e) { console.log('abort: ' + mediaSource.readyState); });
+
+		  buffer.addEventListener('update', function() { // Note: Have tried 'updateend'
+		    if (queue.length > 0 && !buffer.updating) {
+		      buffer.appendBuffer(queue.shift());
+		    }
+		  });
+		}, false);
+
+		mediaSource.addEventListener('sourceopen', function(e) { console.log('sourceopen: ' + mediaSource.readyState); });
+		mediaSource.addEventListener('sourceended', function(e) { console.log('sourceended: ' + mediaSource.readyState); });
+		mediaSource.addEventListener('sourceclose', function(e) { console.log('sourceclose: ' + mediaSource.readyState); });
+		mediaSource.addEventListener('error', function(e) { console.log('error: ' + mediaSource.readyState); });
+
+		vSocket.addEventListener('message', function(e) {
+		  console.log("on video message " + e.data);
+		  if (typeof e.data !== 'string') {
+		    if (buffer.updating || mediaSource.readyState != "open" || queue.length > 0) {
+		      queue.push(e.data);
+		    } else {
+		      buffer.appendBuffer(e.data);
+		    }
+		  }
+		}, false);
+
+  }
 </SCRIPT>
 </head>
 <body>
+	<video controls id='video' width="320" height="200"></video>
 	<h1>JavaScript Event KeyCode Test Page</h1>
 	<P>Input: <INPUT id="input" type="text" value=""/></P>
-	<P>WebSocket: <INPUT id="address" type="text" value="ws://localhost:1337"/></P>
+	<P>Video:<INPUT id="vaddress" type="text" value="ws://localhost:1338"/></P>
+	<P>Keys: <INPUT id="kaddress" type="text" value="ws://10.60.62.12:1337"/></P>
+
 	<button onclick="connect()">Connect</button>
 	<button onclick="disconnect()">Disconnect</button>
 
@@ -148,7 +208,8 @@
 		</THEAD>
 		<TR>
 			<TH>event.keyCode</TH>
-			<TD id="onkeydown_keycode"></TD>
+			<TD id="
+			"></TD>
 			<TD id="onkeypress_keycode"></TD>
 			<TD id="onkeyup_keycode"></TD>
 		</TR>
